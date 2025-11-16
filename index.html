@@ -37,18 +37,39 @@
         const [showAddForm, setShowAddForm] = useState(false);
         const [newPost, setNewPost] = useState({ date: '', day: '', pillar: '', topic: '', status: 'Planned', posted: false, founderComments: 0, meetingsBooked: 0, postLink: '', driveLink: '', notes: '' });
 
-        useEffect(() => {
-          const initialPosts = [
-            { id:1, week:1, date:'2024-11-17', day:'Monday', pillar:'Case Study', topic:'How Mamaearth scaled to ₹500Cr+ with D2C-first GTM', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Focus on channel sequencing, specific metrics', postLink:'', driveLink:'' },
-            { id:2, week:1, date:'2024-11-18', day:'Tuesday', pillar:'Framework', topic:'Revenue Architecture Framework - Audit any business', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Include TAM/ICP/Channel Fit/Unit Economics', postLink:'', driveLink:'' },
-            { id:3, week:1, date:'2024-11-19', day:'Wednesday', pillar:'Learning', topic:'SaaS pricing psychology lessons from class', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Value-based pricing, anchoring, packaging', postLink:'', driveLink:'' },
-            { id:4, week:1, date:'2024-11-20', day:'Thursday', pillar:'Data Story', topic:'Why only 8% of Indian D2C brands are profitable', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Unit economics breakdown, CAC trends', postLink:'', driveLink:'' },
-            { id:5, week:1, date:'2024-11-21', day:'Friday', pillar:'Capstone', topic:'Building GTM strategy - Research process Day 1', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Methodology, TAM calculations, competitive mapping', postLink:'', driveLink:'' },
-            { id:6, week:1, date:'2024-11-22', day:'Saturday', pillar:'Synthesis', topic:'B2B SaaS vs D2C revenue model differences', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'CAC recovery, margins, retention, capital needs', postLink:'', driveLink:'' },
-            { id:7, week:1, date:'2024-11-23', day:'Sunday', pillar:'Contrarian', topic:'Why growth hacking advice kills D2C brands', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Debunk myths, focus on unit economics', postLink:'', driveLink:'' }
-          ];
-          setPosts(initialPosts);
-        }, []);
+       // Load posts from localStorage if available, otherwise fall back to initial posts
+useEffect(() => {
+  const saved = localStorage.getItem('linkedin_posts_v1');
+  if (saved) {
+    try {
+      setPosts(JSON.parse(saved));
+      return;
+    } catch (e) {
+      console.warn('Failed to parse saved posts, using defaults.', e);
+    }
+  }
+
+  // fallback initial posts (same content you had)
+  const initialPosts = [
+    { id:1, week:1, date:'2024-11-17', day:'Monday', pillar:'Case Study', topic:'How Mamaearth scaled to ₹500Cr+ with D2C-first GTM', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Focus on channel sequencing, specific metrics', postLink:'', driveLink:'' },
+    { id:2, week:1, date:'2024-11-18', day:'Tuesday', pillar:'Framework', topic:'Revenue Architecture Framework - Audit any business', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Include TAM/ICP/Channel Fit/Unit Economics', postLink:'', driveLink:'' },
+    { id:3, week:1, date:'2024-11-19', day:'Wednesday', pillar:'Learning', topic:'SaaS pricing psychology lessons from class', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Value-based pricing, anchoring, packaging', postLink:'', driveLink:'' },
+    { id:4, week:1, date:'2024-11-20', day:'Thursday', pillar:'Data Story', topic:'Why only 8% of Indian D2C brands are profitable', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Unit economics breakdown, CAC trends', postLink:'', driveLink:'' },
+    { id:5, week:1, date:'2024-11-21', day:'Friday', pillar:'Capstone', topic:'Building GTM strategy - Research process Day 1', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Methodology, TAM calculations, competitive mapping', postLink:'', driveLink:'' },
+    { id:6, week:1, date:'2024-11-22', day:'Saturday', pillar:'Synthesis', topic:'B2B SaaS vs D2C revenue model differences', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'CAC recovery, margins, retention, capital needs', postLink:'', driveLink:'' },
+    { id:7, week:1, date:'2024-11-23', day:'Sunday', pillar:'Contrarian', topic:'Why growth hacking advice kills D2C brands', status:'Planned', posted:false, founderComments:0, meetingsBooked:0, notes:'Debunk myths, focus on unit economics', postLink:'', driveLink:'' }
+  ];
+  setPosts(initialPosts);
+}, []);
+// Save posts to localStorage whenever posts change
+useEffect(() => {
+  try {
+    localStorage.setItem('linkedin_posts_v1', JSON.stringify(posts));
+  } catch (e) {
+    console.warn('Failed to save posts to localStorage', e);
+  }
+}, [posts]);
+
 
         const calculatePoints = () => {
           const postPoints = posts.filter(p => p.posted).length * 10;
